@@ -82,10 +82,10 @@ QString RawDataConvertDialog::getCovertFilePath(const QString& filePath)
 
     char dstStr[1024] = {0};
     memcpy(dstStr, chStr, pointIdx);
-    strcat(dstStr, "_cvt");
+    strncat(dstStr, "_cvt", sizeof(dstStr)-strlen(dstStr)-1);
     if (pointIdx != n)
     {
-        strcat(dstStr, chStr+pointIdx);
+        strncat(dstStr, chStr+pointIdx, sizeof(dstStr)-strlen(dstStr)-1);
     }
 
     str = QString(dstStr);
@@ -102,11 +102,18 @@ bool RawDataConvertDialog::convertFile()
     }
 
     QString outputFilePath = getCovertFilePath(filePath);
-    qDebug() << outputFilePath;
-    //QIODevice::WriteOnly
+    //qDebug() << outputFilePath;
 
-    //QFile inputFile(filePath);
-    //inputFile.open(QIODevice::ReadOnly);
+    QFile outputFile(outputFilePath);
+    outputFile.open(QIODevice::WriteOnly);
+
+    QFile inputFile(filePath);
+    inputFile.open(QIODevice::ReadOnly);
+
+    while (1)
+    {
+
+    }
 
     return true;
 }

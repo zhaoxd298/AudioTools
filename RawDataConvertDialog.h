@@ -38,6 +38,7 @@ private:
 
     QString getCovertFilePath(const QString& filePath);
     bool convertFile();
+
 protected:
     void dragEnterEvent(QDragEnterEvent*event); //文件拖拽到窗体内，触发
     void dropEvent(QDropEvent *event); //文件拖拽到窗体内，释放，触发
