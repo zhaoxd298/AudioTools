@@ -6,6 +6,7 @@
 #include <QTabWidget>
 
 #include "RawDataConvertDialog.h"
+#include "ConvertBinWithHFile.h"
 
 #define VERSION "V1.0.0"
 
@@ -16,7 +17,8 @@ private:
     QWidget* m_mainWidget;
     QTabWidget* m_tabWidget;
 
-    RawDataConvertDialog* m_rawData_convert;
+    RawDataConvertDialog* m_rawDataConvert;
+    ConvertBinWithHFile* m_convertBinWithHFile;
 
     void constructUI();
     void connectSlots();

@@ -13,6 +13,26 @@ RawDataConvertDialog::RawDataConvertDialog(QWidget *parent)
     constructUI();
     connectSlots();
 
+    if (m_removeHigh8bitRBtn->isChecked())
+    {
+        m_covertType = RemoveHight8bit;
+    }
+
+    if (m_removeHigh16bitRBtn->isChecked())
+    {
+        m_covertType = RemoveHight16bit;
+    }
+
+    if (m_removeLow8bitRBtn->isChecked())
+    {
+        m_covertType = RemoveLow8bit;
+    }
+
+    if (m_removeLow16bitRBtn->isChecked())
+    {
+        m_covertType = RemoveLow16bit;
+    }
+
     this->setAcceptDrops(true); //必须设置，不然无法接收拖放事件
 }
 
@@ -35,7 +55,7 @@ void RawDataConvertDialog::constructUI()
     radioGridLayout->addWidget(m_removeLow8bitRBtn, 1, 0);
     radioGridLayout->addWidget(m_removeLow16bitRBtn, 1, 1);
 
-    m_okBtn = new QPushButton("OK");
+    m_okBtn = new QPushButton("Convert");
     QHBoxLayout* okHLayout = new QHBoxLayout;
     okHLayout->addStretch();
     okHLayout->addWidget(m_okBtn);
@@ -93,27 +113,80 @@ QString RawDataConvertDialog::getCovertFilePath(const QString& filePath)
     return str;
 }
 
+#define BUF_SIZE 1024
 bool RawDataConvertDialog::convertFile()
 {
-    QString filePath = m_filePathEdit->text();
-    if (filePath.isEmpty())
+    QString inputFilePath = m_filePathEdit->text();
+    if (inputFilePath.isEmpty())
     {
         return false;
     }
 
-    QString outputFilePath = getCovertFilePath(filePath);
+    QFile inputFile(inputFilePath);
+    inputFile.open(QIODevice::ReadOnly);
+
+    QString outputFilePath = getCovertFilePath(inputFilePath);
     //qDebug() << outputFilePath;
 
     QFile outputFile(outputFilePath);
     outputFile.open(QIODevice::WriteOnly);
 
-    QFile inputFile(filePath);
-    inputFile.open(QIODevice::ReadOnly);
-
+    char rdBuf[BUF_SIZE];
+    char wtBuf[BUF_SIZE];
     while (1)
     {
+        int size = inputFile.read(rdBuf, sizeof(rdBuf));
+        int n = size / 4;
+        int wtSize = 0;
+        for (int i=0; i<n; i++)
+        {
+            unsigned int tmp = ((unsigned int*)rdBuf)[i];
 
+            switch (m_covertType)
+            {
+            case RemoveHight8bit:
+                wtBuf[wtSize] = (char)(tmp & 0xff);
+                wtBuf[wtSize + 1] = (char)((tmp >> 8) & 0xff);
+                wtBuf[wtSize + 2] = (char)((tmp >> 16) & 0xff);
+                wtSize += 3;
+                break;
+            case RemoveHight16bit:
+                wtBuf[wtSize] = (char)(tmp & 0xff);
+                wtBuf[wtSize + 1] = (char)((tmp >> 8) & 0xff);
+                wtSize += 2;
+                break;
+            case RemoveLow8bit:
+                tmp >>= 8;
+                wtBuf[wtSize] = (char)(tmp & 0xff);
+                wtBuf[wtSize + 1] = (char)((tmp >> 8) & 0xff);
+                wtBuf[wtSize + 2] = (char)((tmp >> 16) & 0xff);
+                wtSize += 3;
+                break;
+            case RemoveLow16bit:
+                tmp >>= 16;
+                wtBuf[wtSize] = (char)(tmp & 0xff);
+                wtBuf[wtSize + 1] = (char)((tmp >> 8) & 0xff);
+                wtSize += 2;
+                break;
+            default:
+                break;
+            };
+
+            outputFile.write(wtBuf, wtSize);
+            wtSize = 0;
+        }
+
+        if (inputFile.atEnd())
+        {
+            qDebug() << "read file over!";
+            QString okStr = QString("File convert success!");
+            QMessageBox::information(this, QString(tr("Info")), okStr, QString(tr("OK")));
+            break;
+        }
     }
+
+    inputFile.close();
+    outputFile.close();
 
     return true;
 }

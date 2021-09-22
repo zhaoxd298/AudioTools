@@ -17,14 +17,11 @@ void MainWindow::constructUI()
     m_mainWidget = new QWidget;
     m_tabWidget = new QTabWidget;
 
-    m_rawData_convert = new RawDataConvertDialog;
-    QWidget* widget1 = new QWidget;
-    QWidget* widget2 = new QWidget;
+    m_rawDataConvert = new RawDataConvertDialog;
+    m_convertBinWithHFile = new ConvertBinWithHFile;
 
-    m_tabWidget->addTab(m_rawData_convert, "Raw Data Convert");
-    //m_tabWidget->insertTab(1, widget1, "Bin To h");
-    m_tabWidget->addTab(widget1, "Bin To *.h");
-    m_tabWidget->addTab(widget2, "*.h To Bin");
+    m_tabWidget->addTab(m_rawDataConvert, "Raw Data Convert");
+    m_tabWidget->addTab(m_convertBinWithHFile, "Bin <-> x.h");
 
     QVBoxLayout* mainWidgetVLayout = new QVBoxLayout(m_mainWidget);
     mainWidgetVLayout->addWidget(m_tabWidget);
