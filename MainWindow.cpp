@@ -8,8 +8,6 @@ MainWindow::MainWindow(QWidget *parent)
     connectSlots();
 }
 
-
-
 void MainWindow::constructUI()
 {
     setWindowTitle(tr("Audio Tools ") + VERSION);
@@ -18,10 +16,13 @@ void MainWindow::constructUI()
     m_tabWidget = new QTabWidget;
 
     m_rawDataConvert = new RawDataConvertDialog;
-    m_convertBinWithHFile = new ConvertBinWithHFile;
-
     m_tabWidget->addTab(m_rawDataConvert, "Raw Data Convert");
+
+    m_convertBinWithHFile = new ConvertBinWithHFile;
     m_tabWidget->addTab(m_convertBinWithHFile, "Bin <-> x.h");
+
+    m_dolbyDialog = new DolbyDialog;
+    m_tabWidget->addTab(m_dolbyDialog, "Dolby");
 
     QVBoxLayout* mainWidgetVLayout = new QVBoxLayout(m_mainWidget);
     mainWidgetVLayout->addWidget(m_tabWidget);

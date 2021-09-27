@@ -7,8 +7,9 @@
 
 #include "RawDataConvertDialog.h"
 #include "ConvertBinWithHFile.h"
+#include "DolbyDialog.h"
 
-#define VERSION "V1.0.0"
+#define VERSION "V1.0.1"
 
 class MainWindow : public QMainWindow
 {
@@ -19,6 +20,7 @@ private:
 
     RawDataConvertDialog* m_rawDataConvert;
     ConvertBinWithHFile* m_convertBinWithHFile;
+    DolbyDialog* m_dolbyDialog;
 
     void constructUI();
     void connectSlots();

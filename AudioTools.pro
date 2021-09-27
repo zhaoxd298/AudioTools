@@ -10,12 +10,16 @@ CONFIG += c++11
 
 SOURCES += \
     ConvertBinWithHFile.cpp \
+    DolbyDialog.cpp \
+    DolbyEsParseDialog.cpp \
     RawDataConvertDialog.cpp \
     main.cpp \
     MainWindow.cpp
 
 HEADERS += \
     ConvertBinWithHFile.h \
+    DolbyDialog.h \
+    DolbyEsParseDialog.h \
     MainWindow.h \
     RawDataConvertDialog.h
 
