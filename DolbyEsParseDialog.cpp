@@ -212,25 +212,27 @@ void DolbyEsParseDialog::constructUI()
     m_tableWidget = new QTableWidget;
     m_tableWidget->horizontalHeader()->setStyleSheet("QHeaderView::section{background:skyblue;}"); //设置表头背景色
     m_tableWidget->setStyleSheet("selection-background-color:lightblue;"); //设置选中背景色
-    m_tableWidget->verticalHeader()->setVisible(false);    // 隐藏纵坐标表头
+    //m_tableWidget->verticalHeader()->setVisible(false);    // 隐藏纵坐标表头
     m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);    //整行选中的方式
     m_tableWidget->setColumnCount(3);
     QStringList headerList;
     headerList << "Offset" << "Frame Size" << "Sample Rate";
     m_tableWidget->setHorizontalHeaderLabels(headerList);
+    //m_tableWidget->setMouseTracking(true);    // 设置鼠标追踪为真
 
     m_headerInfoLabel = new QLabel;
 
     QHBoxLayout* mainHLayout = new QHBoxLayout(this);
     mainHLayout->addWidget(m_tableWidget);
     mainHLayout->addWidget(m_headerInfoLabel);
+
+    setWindowTitle("Dolby Info Parse");
+    setMinimumSize(800, 600);
 }
 
 void DolbyEsParseDialog::connectSlots()
 {
-    connect(m_tableWidget, SIGNAL(cellClicked(int,int)), this, SLOT(onTableWidgetCellClick(int,int)));
-    connect(m_tableWidget, SIGNAL(cellActivated(int,int)), this, SLOT(onTableWidgetCellClick(int,int)));
-    connect(m_tableWidget, SIGNAL(cellEntered(int,int)), this, SLOT(onTableWidgetCellClick(int,int)));
+    connect(m_tableWidget, SIGNAL(itemSelectionChanged()), this, SLOT(onSelectionChanged()));
 }
 
 DolbyEsParseDialog::DolbyEsParseDialog(QString filePath, QWidget *parent)
@@ -244,9 +246,11 @@ DolbyEsParseDialog::DolbyEsParseDialog(QString filePath, QWidget *parent)
     setDolbyInfoToTableWidget();
 }
 
-void DolbyEsParseDialog::onTableWidgetCellClick(int row, int line)
+void DolbyEsParseDialog::onSelectionChanged()
 {
-    qDebug() << row << line;
+    QList<QTableWidgetSelectionRange> rangeList = m_tableWidget->selectedRanges();
+    //qDebug() << __func__ << rangeList[0].topRow() << rangeList[0].bottomRow() << rangeList[0].leftColumn() << rangeList[0].rightColumn();
+    qDebug() << __func__ << rangeList[0].topRow();
 }
 
 DolbyEsParseDialog::~DolbyEsParseDialog()

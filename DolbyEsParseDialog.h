@@ -73,7 +73,7 @@ public:
     ~DolbyEsParseDialog();
 
 public slots:
-    void onTableWidgetCellClick(int row, int line);
+    void onSelectionChanged();
 };
 
 #endif // DOLBYESPARSEDIALOG_H
