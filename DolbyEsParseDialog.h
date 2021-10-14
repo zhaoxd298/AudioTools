@@ -9,6 +9,12 @@
 
 #define DOLBY_HEADER_LEN 8
 
+enum DolbyType_e
+{
+    AC3,
+    EAC3,
+};
+
 struct DolbyHeaderInfo
 {
     int syncword;           // 16 bit
@@ -44,6 +50,7 @@ struct DolbyHeaderInfo
     int convsync;           // 1 bit
     int addbsie;            // 1 bit
 
+    DolbyType_e dolbyType;
     int frmSize;
     int sampleRate;
     int blkPerFrm;
@@ -65,6 +72,8 @@ private:
     bool adjustEndianness(unsigned char* buf, int size);
     bool parseDolbyHeader(const QString& filePath);
     void setDolbyInfoToTableWidget();
+
+    void displayDolbyHeaderInfo(const DolbyHeaderInfo& info);
 
     void constructUI();
     void connectSlots();

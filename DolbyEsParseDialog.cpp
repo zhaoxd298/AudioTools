@@ -137,10 +137,12 @@ bool DolbyEsParseDialog::parseDolbyHeader(const QString& filePath)
 
         if (dolbyHeader.bsid <= 10)     // AC3 [0, 8]
         {
-
+            dolbyHeader.dolbyType = AC3;
         }
         else        // EAC3 [11, 16]
         {
+            dolbyHeader.dolbyType = EAC3;
+
             dolbyHeader.strmtyp = ptr[2] >> 6;
 
             dolbyHeader.substreamid = (ptr[2] >> 3) & 0x7;
@@ -207,6 +209,51 @@ void DolbyEsParseDialog::setDolbyInfoToTableWidget()
     }
 }
 
+void DolbyEsParseDialog::displayDolbyHeaderInfo(const DolbyHeaderInfo& info)
+{
+    QString str = "";
+
+    if (AC3 == info.dolbyType)
+    {
+        str += "ac3_syncframe()\n";
+    }
+    else if (EAC3 == info.dolbyType)
+    {
+        str += "ac3_syncframe()\n";
+        str += " +syncinfo()\n";
+
+        QString syncword = QString("  |- syncword\t\t: 0x%1 (16 bits)\n").arg(QString::number(info.syncword, 16));
+        str += syncword;
+
+        str += "\n +bsi()\n";
+        str += QString("  |- strmtyp\t\t: %1 [Type %2] (2 bits)\n").arg(info.strmtyp).arg(0);  // type need reset
+        str += QString("  |- substreamid\t: %1 (3 bits)\n").arg(info.substreamid);
+        str += QString("  |- frmsiz\t\t: %1 [%2 bytes] (11 bits)\n").arg(info.frmsiz).arg(info.frmSize);
+        str += QString("  |- fscod\t\t: %1 [%2 Hz] (2 bits)\n").arg(info.fscod).arg(info.sampleRate);
+        str += QString("  |- numblkscod\t\t: %1 (2 bits)\n").arg(info.numblkscod);
+        str += QString("  |- acmod\t\t: %1 (3 bits)\n").arg(info.acmod);
+        str += QString("  |- lfeon\t\t: %1 (1 bits)\n").arg(info.lfeon);
+        str += QString("  |- bsid\t\t: %1 (5 bits)\n").arg(info.bsid);
+        str += QString("  |- dialnorm\t\t: %1 (5 bits)\n").arg(info.dialnorm);
+        str += QString("  |- compre\t\t: %1 (1 bits)\n").arg(info.compre);
+        str += QString("  |- compr\t\t: %1 (8 bits)\n").arg(info.compr);
+        str += QString("  |- mixmdate\t\t: %1 (1 bits)\n").arg(info.mixmdate);
+        str += QString("  |- ltrtcmixlev\t\t: %1 (3 bits)\n").arg(info.ltrtcmixlev);
+        str += QString("  |- lorocmixlev\t\t: %1 (3 bits)\n").arg(info.lorocmixlev);
+        str += QString("  |- ltrtsurmixlev\t\t: %1 (3 bits)\n").arg(info.ltrtsurmixlev);
+        str += QString("  |- lorosurmixlev\t\t: %1 (3 bits)\n").arg(info.lorosurmixlev);
+        str += QString("  |- lfemixlevcode\t\t: %1 (1 bits)\n").arg(info.lfemixlevcode);
+        str += QString("  |- pgmscle\t\t: %1 (1 bits)\n").arg(info.pgmscle);
+        str += QString("  |- extpgmscle\t\t: %1 (1 bits)\n").arg(info.extpgmscle);
+        str += QString("  |- mixdef\t\t: %1 (2 bits)\n").arg(info.mixdef);
+        str += QString("  |- mixdata\t\t: %1 (12 bits)\n").arg(info.mixdata);
+
+    }
+
+
+    m_headerInfoLabel->setText(str);
+}
+
 void DolbyEsParseDialog::constructUI()
 {
     m_tableWidget = new QTableWidget;
@@ -221,6 +268,7 @@ void DolbyEsParseDialog::constructUI()
     //m_tableWidget->setMouseTracking(true);    // 设置鼠标追踪为真
 
     m_headerInfoLabel = new QLabel;
+    m_headerInfoLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     QHBoxLayout* mainHLayout = new QHBoxLayout(this);
     mainHLayout->addWidget(m_tableWidget);
@@ -244,6 +292,11 @@ DolbyEsParseDialog::DolbyEsParseDialog(QString filePath, QWidget *parent)
     connectSlots();
     parseDolbyHeader(m_filePath);
     setDolbyInfoToTableWidget();
+
+    if (m_dolbyHeaderList.size() > 0)
+    {
+        displayDolbyHeaderInfo(m_dolbyHeaderList[0]);
+    }
 }
 
 void DolbyEsParseDialog::onSelectionChanged()
@@ -251,6 +304,12 @@ void DolbyEsParseDialog::onSelectionChanged()
     QList<QTableWidgetSelectionRange> rangeList = m_tableWidget->selectedRanges();
     //qDebug() << __func__ << rangeList[0].topRow() << rangeList[0].bottomRow() << rangeList[0].leftColumn() << rangeList[0].rightColumn();
     qDebug() << __func__ << rangeList[0].topRow();
+
+    int index = rangeList[0].topRow();
+    if (index < m_dolbyHeaderList.size())
+    {
+        displayDolbyHeaderInfo(m_dolbyHeaderList[index]);
+    }
 }
 
 DolbyEsParseDialog::~DolbyEsParseDialog()
