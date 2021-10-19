@@ -9,7 +9,7 @@
 #include "ConvertBinWithHFile.h"
 #include "DolbyDialog.h"
 
-#define VERSION "V1.0.1"
+#define VERSION "V1.0.2"
 
 class MainWindow : public QMainWindow
 {

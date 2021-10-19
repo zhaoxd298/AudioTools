@@ -17,18 +17,23 @@ enum DolbyType_e
 
 struct DolbyHeaderInfo
 {
-    int syncword;           // 16 bit
+    char syncword[8];       // 16 bit
+    int crcl;               // 16 bit (ac3 only)
     int strmtyp;            // 2 bit
     int substreamid;        // 3 bit
     int frmsiz;             // 11 bit
     int fscod;              // 2 bit
+    int frmsizecod;         // 6 bit (ac3 only)
     int numblkscod;         // 2 bit
     int acmod;              // 3 bit
+    int cmixlev;            // 2 bit (ac3 only)
+    int surmixlev;          // 2 bit (ac3 only)
     int lfeon;              // 1 bit
-    int bsid;               // 16 bit
+    int bsid;               // 5 bit
     int dialnorm;           // 5 bit
     int compre;             // 1 bit
     int compr;              // 8 bit
+    int langcode;           // 1 bit (ac3 only)
     int mixmdate;           // 1 bit
     int ltrtcmixlev;        // 3 bit
     int lorocmixlev;        // 3 bit
@@ -48,12 +53,17 @@ struct DolbyHeaderInfo
     int audprodie;          // 1 bit
     int sourcefscod;        // 1 bit
     int convsync;           // 1 bit
+    int timecod1e;          // 1 bit (ac3 only)
+    int timecod2e;          // 1 bit (ac3 only)
     int addbsie;            // 1 bit
+    int addbsil;            // 6 bit
 
+    unsigned long offset;
     DolbyType_e dolbyType;
     int frmSize;
     int sampleRate;
     int blkPerFrm;
+
     DolbyHeaderInfo();
 };
 
@@ -61,6 +71,7 @@ class DolbyEsParseDialog : public QDialog
 {
     Q_OBJECT
 private:
+    unsigned long m_offset;
     QString m_filePath;
     QList<DolbyHeaderInfo> m_dolbyHeaderList;
 

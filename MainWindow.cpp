@@ -27,6 +27,8 @@ void MainWindow::constructUI()
     QVBoxLayout* mainWidgetVLayout = new QVBoxLayout(m_mainWidget);
     mainWidgetVLayout->addWidget(m_tabWidget);
 
+    //setWindowIcon(QIcon(":/img/img/icon.png"));
+
     this->resize(450, 200);
 
     setCentralWidget(m_mainWidget);

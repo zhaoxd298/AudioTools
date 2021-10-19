@@ -36,7 +36,7 @@ void DolbyDialog::constructUI()
     filePathHLayout->addWidget(m_filePathEdit);
     filePathHLayout->addWidget(m_scanBtn);
 
-    m_adjustEndiannessRBtn = new QRadioButton("Adjust Endianness");
+    m_adjustEndiannessRBtn = new QRadioButton("Adjust Endianness\n(0x770b -> 0x0b77)");
     m_adjustEndiannessRBtn->setChecked(true);
     m_parseEsInfoRBtn = new QRadioButton("Parse Es Info");
     QGridLayout* radioGridLayout = new QGridLayout;
