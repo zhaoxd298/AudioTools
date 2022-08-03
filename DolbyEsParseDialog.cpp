@@ -175,6 +175,9 @@ bool DolbyEsParseDialog::parseDolbyHeader(const QString& filePath)
             adjustEndianness(ptr, DOLBY_HEADER_LEN);
         }
 
+        dolbyHeader.acmod = (ptr[4] >> 1) & 0x7;
+        dolbyHeader.lfeon = ptr[4] & 0x1;
+
         dolbyHeader.bsid = ptr[5] >> 3;
         //qDebug() << "bsid:" << dolbyHeader.bsid;
         //qDebug("%02x %02x %02x %02x %02x %02x %02x %02x", ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5], ptr[6], ptr[7]);
@@ -312,7 +315,7 @@ void DolbyEsParseDialog::displayDolbyHeaderInfo(const DolbyHeaderInfo& info)
         str += "\n +bsi()\n";
         str += QString("  |- bsid\t\t: %1 (5 bits)\n").arg(info.bsid);
         str += QString("  |- bsmod\t\t: %1 (3 bits)\n").arg(info.bsmod);
-        str += QString("  |- acmod\t\t: %1 [?????] (3 bits)\n").arg(info.acmod);
+        str += QString("  |- acmod\t\t: %1 (3 bits)\n").arg(info.acmod);
         str += QString("  |- cmixlev\t\t: %1 [?????] (2 bits)\n").arg(info.cmixlev);
         str += QString("  |- surmixlev\t\t: %1 [?????] (2 bits)\n").arg(info.surmixlev);
         str += QString("  |- lfeon\t\t: %1 (1 bits)\n").arg(info.lfeon);
